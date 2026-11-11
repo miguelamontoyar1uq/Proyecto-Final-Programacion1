@@ -32,4 +32,6 @@ public abstract class Transaccion {
     public String getDescripcion() {
         return descripcion;
     }
+    // esta mierda es para los puntos que genre cada tipo
+    public abstract int calcularPuntosGenerados();
     }

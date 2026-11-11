@@ -10,4 +10,8 @@ public class Retiro extends Transaccion {
     public String getTipo() {
         return "Retiro";
     }
+    @Override
+    public int calcularPuntosGenerados() {
+        return (int) (getMonto() / 100) * 2;
+    }
 }

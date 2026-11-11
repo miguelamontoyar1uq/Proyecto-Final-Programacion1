@@ -3,7 +3,7 @@ package co.edu.uniquindio.poo.proyectofinal.model;
 import java.util.*;
 
 public class Cliente {
-    private final String  id;
+    private final String id;
     private String nombre;
     private String telefono;
     private String correo;
@@ -14,6 +14,7 @@ public class Cliente {
     private RangoCliente rango;
     private List<Beneficio> beneficiosActivos;
     private List<RegistroPuntos> historialPuntos;
+
     public Cliente(String id, String nombre, String telefono, String correo) {
         this.id = id;
         this.nombre = nombre;
@@ -30,9 +31,11 @@ public class Cliente {
         this.rango = RangoCliente.BRONCE; // MANOOOO pues supongo que todos los
         // cleintes emoezian en bronce no?
     }
+
     public void agregarMonedero(String nombreMonedero, Monedero monedero) {
         this.listaMonederos.put(nombreMonedero, monedero);
     }
+
     private void actualizarRango() {
 
         if (puntosAcumulados <= 500) {
@@ -79,40 +82,28 @@ public class Cliente {
         return Collections.unmodifiableMap(listaMonederos);
     }
 
-
-
     public List<TransaccionProgramada> getListaTransaccionesProgramadas() {
         return Collections.unmodifiableList(listaTransaccionesProgramadas);
     }
-
-
 
     public List<Notificacion> getNotificaciones() {
         return Collections.unmodifiableList(notificaciones);
     }
 
-
-
     public int getPuntosAcumulados() {
         return puntosAcumulados;
     }
-
-
 
     public RangoCliente getRango() {
         return rango;
     }
 
-
-
     public List<Beneficio> getBeneficiosActivos() {
-        return Collections.unmodifiableList(beneficiosActivos) ;
+        return Collections.unmodifiableList(beneficiosActivos);
     }
 
-
-
     public List<RegistroPuntos> getHistorialPuntos() {
-        return Collections.unmodifiableList(historialPuntos) ;
+        return Collections.unmodifiableList(historialPuntos);
     }
     // mano faltan estos metodos
     // sumarPuntos(int cantidad, RegistroPuntos registro)
@@ -126,5 +117,29 @@ public class Cliente {
     // activarBeneficio(Beneficio beneficio)
 
 
+    // eso es parte del algoritmo de deteccionn de movimientos que pueden ser fraudolentos
+    public List<Transaccion> obtenerTransaccionesAtipicas() {
+        // esta parte es para unir los movimientos de cada monedero
+        List<Transaccion> historialTransacciones = listaMonederos.values().stream()
+                .flatMap(monedero -> monedero.getHistorialTransacciones().stream())
+                .toList();
+
+        if (historialTransacciones.size() < 2) {
+            return List.of();
+        }
+        //promedio
+        double promedio=
+                historialTransacciones.stream().mapToDouble(Transaccion::getMonto).average().getAsDouble();
+    // desviacion
+        double sumaCuadrados = 0;
+        for (Transaccion t : historialTransacciones) {
+            sumaCuadrados += Math.pow(t.getMonto() - promedio, 2);
+        }
+        double desviacion = Math.sqrt(sumaCuadrados / historialTransacciones.size());
+        //umbral
+        double umbral = promedio + (2 * desviacion);
+        // sospechosas
+        historialTransacciones.stream().filter(t -> t.getMonto() > umbral).toList();
+    }
 
 }

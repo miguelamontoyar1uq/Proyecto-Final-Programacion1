@@ -16,4 +16,8 @@ public class Transferencia extends Transaccion {
     public String getCuentaDestino() {
         return cuentaDestino;
     }
+    @Override
+    public int calcularPuntosGenerados() {
+        return (int) (getMonto() / 100) * 3;
+    }
 }
