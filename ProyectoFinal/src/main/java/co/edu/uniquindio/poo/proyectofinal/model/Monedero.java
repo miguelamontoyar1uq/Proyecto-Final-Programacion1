@@ -1,0 +1,87 @@
+package co.edu.uniquindio.poo.proyectofinal.model;
+
+import co.edu.uniquindio.poo.proyectofinal.exceptions.LimiteRetiroExcedidoException;
+import co.edu.uniquindio.poo.proyectofinal.exceptions.MonederoInactivoException;
+import co.edu.uniquindio.poo.proyectofinal.exceptions.SaldoInsuficienteException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public abstract class Monedero {
+    private final String numeroCuenta;
+    private double saldo;
+    private boolean activo;
+    private final List<Transaccion> historialTransacciones;
+
+    public Monedero(String numeroCuenta, double saldoInicial) {
+        if (numeroCuenta == null || numeroCuenta.isBlank()) {
+            throw new IllegalArgumentException("El número de cuenta no puede estar vacío.");
+        }
+        if (saldoInicial < 0) {
+            throw new IllegalArgumentException("El saldo inicial no puede ser negativo.");
+        }
+        this.numeroCuenta = numeroCuenta;
+        this.saldo = saldoInicial;
+        this.activo = true;
+        this.historialTransacciones = new ArrayList<>();
+    }
+
+    public void depositar(double monto) throws MonederoInactivoException {
+        if (!activo) {
+            throw new MonederoInactivoException("El monedero " + numeroCuenta + " se encuentra inactivo.");
+        }
+        if (monto <= 0) {
+            throw new IllegalArgumentException("El monto a depositar debe ser mayor a cero.");
+        }
+        this.saldo += monto;
+    }
+
+    public void retirar(double monto) throws MonederoInactivoException, SaldoInsuficienteException, LimiteRetiroExcedidoException {
+        if (!activo) {
+            throw new MonederoInactivoException("El monedero " + numeroCuenta + " se encuentra inactivo.");
+        }
+        if (monto <= 0) {
+            throw new IllegalArgumentException("El monto a retirar debe ser mayor a cero.");
+        }
+        if (monto > saldo) {
+            throw new SaldoInsuficienteException("Saldo insuficiente en la cuenta " + numeroCuenta);
+        }
+        if (!validarLimiteRetiro(monto)) {
+            throw new LimiteRetiroExcedidoException("El monto excede el límite máximo permitido para este monedero.");
+        }
+        this.saldo -= monto;
+    }
+
+    public void registrarTransaccion(Transaccion transaccion) {
+        if (transaccion == null) {
+            throw new IllegalArgumentException("La transacción no puede ser nula.");
+        }
+        this.historialTransacciones.add(transaccion);
+    }
+
+    // Métodos abstractos obligatorios
+    public abstract boolean validarLimiteRetiro(double monto);
+    public abstract String getTipoMonedero();
+
+    // Getters
+    public String getNumeroCuenta() {
+        return numeroCuenta;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    public List<Transaccion> getHistorialTransacciones() {
+        return Collections.unmodifiableList(historialTransacciones);
+    }
+}
