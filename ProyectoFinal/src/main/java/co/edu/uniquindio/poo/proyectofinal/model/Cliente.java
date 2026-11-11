@@ -105,17 +105,55 @@ public class Cliente {
     public List<RegistroPuntos> getHistorialPuntos() {
         return Collections.unmodifiableList(historialPuntos);
     }
-    // mano faltan estos metodos
-    // sumarPuntos(int cantidad, RegistroPuntos registro)
 
-    //restarPuntos(int cantidad, RegistroPuntos registro)
+    public void sumarPuntos(int cantidad, RegistroPuntos registro) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad de puntos debe ser mayor a cero.");
+        }
+        this.puntosAcumulados += cantidad;
+        this.historialPuntos.add(registro);
+        actualizarRango();
+    }
 
-    //ecibirNotificacion(Notificacion notificacion)
+    public void restarPuntos(int cantidad, RegistroPuntos registro) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad de puntos debe ser mayor a cero.");
+        }
+        if (cantidad > puntosAcumulados) {
+            throw new IllegalArgumentException("El cliente no tiene puntos suficientes.");
+        }
+        this.puntosAcumulados -= cantidad;
+        this.historialPuntos.add(registro);
+        actualizarRango();
+    }
 
-    //programarTransaccion(TransaccionProgramada transaccion)
+    public void acumularPuntos(Transaccion transaccion) {
+        int puntos = transaccion.calcularPuntosGenerados();
+        if (puntos > 0) {
+            sumarPuntos(puntos, new RegistroPuntos(puntos, "GANADOS", "Puntos por " + transaccion.getTipo()));
+        }
+    }
 
-    // activarBeneficio(Beneficio beneficio)
+    public void recibirNotificacion(Notificacion notificacion) {
+        if (notificacion == null) {
+            throw new IllegalArgumentException("La notificación no puede ser nula.");
+        }
+        this.notificaciones.add(notificacion);
+    }
 
+    public void programarTransaccion(TransaccionProgramada transaccion) {
+        if (transaccion == null) {
+            throw new IllegalArgumentException("La transacción programada no puede ser nula.");
+        }
+        this.listaTransaccionesProgramadas.add(transaccion);
+    }
+
+    public void activarBeneficio(Beneficio beneficio) {
+        if (beneficio == null) {
+            throw new IllegalArgumentException("El beneficio no puede ser nulo.");
+        }
+        this.beneficiosActivos.add(beneficio);
+    }
 
     // eso es parte del algoritmo de deteccionn de movimientos que pueden ser fraudolentos
     public List<Transaccion> obtenerTransaccionesAtipicas() {
@@ -128,9 +166,9 @@ public class Cliente {
             return List.of();
         }
         //promedio
-        double promedio=
+        double promedio =
                 historialTransacciones.stream().mapToDouble(Transaccion::getMonto).average().getAsDouble();
-    // desviacion
+        // desviacion
         double sumaCuadrados = 0;
         for (Transaccion t : historialTransacciones) {
             sumaCuadrados += Math.pow(t.getMonto() - promedio, 2);
@@ -139,7 +177,7 @@ public class Cliente {
         //umbral
         double umbral = promedio + (2 * desviacion);
         // sospechosas
-        historialTransacciones.stream().filter(t -> t.getMonto() > umbral).toList();
+        return historialTransacciones.stream().filter(t -> t.getMonto() > umbral).toList();
     }
 
 }

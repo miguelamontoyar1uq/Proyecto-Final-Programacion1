@@ -7,6 +7,7 @@ import co.edu.uniquindio.poo.proyectofinal.exceptions.SaldoInsuficienteException
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public abstract class Monedero {
     private final String numeroCuenta;
@@ -27,7 +28,7 @@ public abstract class Monedero {
         this.historialTransacciones = new ArrayList<>();
     }
 
-    public void depositar(double monto) throws MonederoInactivoException {
+    public Deposito depositar(double monto) throws MonederoInactivoException {
         if (!activo) {
             throw new MonederoInactivoException("El monedero " + numeroCuenta + " se encuentra inactivo.");
         }
@@ -35,9 +36,12 @@ public abstract class Monedero {
             throw new IllegalArgumentException("El monto a depositar debe ser mayor a cero.");
         }
         this.saldo += monto;
+        Deposito deposito = new Deposito(UUID.randomUUID().toString(), monto, "Depósito en " + numeroCuenta);
+        registrarTransaccion(deposito);
+        return deposito;
     }
 
-    public void retirar(double monto) throws MonederoInactivoException, SaldoInsuficienteException, LimiteRetiroExcedidoException {
+    public Retiro retirar(double monto) throws MonederoInactivoException, SaldoInsuficienteException, LimiteRetiroExcedidoException {
         if (!activo) {
             throw new MonederoInactivoException("El monedero " + numeroCuenta + " se encuentra inactivo.");
         }
@@ -51,6 +55,27 @@ public abstract class Monedero {
             throw new LimiteRetiroExcedidoException("El monto excede el límite máximo permitido para este monedero.");
         }
         this.saldo -= monto;
+        Retiro retiro = new Retiro(UUID.randomUUID().toString(), monto, "Retiro de " + numeroCuenta);
+        registrarTransaccion(retiro);
+        return retiro;
+    }
+
+    // Mueven saldo sin registrar transacción (los usa la transferencia)
+    public void debitar(double monto) throws MonederoInactivoException, SaldoInsuficienteException {
+        if (!activo) {
+            throw new MonederoInactivoException("El monedero " + numeroCuenta + " se encuentra inactivo.");
+        }
+        if (monto > saldo) {
+            throw new SaldoInsuficienteException("Saldo insuficiente en la cuenta " + numeroCuenta);
+        }
+        this.saldo -= monto;
+    }
+
+    public void acreditar(double monto) throws MonederoInactivoException {
+        if (!activo) {
+            throw new MonederoInactivoException("El monedero " + numeroCuenta + " se encuentra inactivo.");
+        }
+        this.saldo += monto;
     }
 
     public void registrarTransaccion(Transaccion transaccion) {
