@@ -2,8 +2,8 @@ package co.edu.uniquindio.poo.proyectofinal.model;
 
 public class Deposito extends Transaccion {
 
-    public Deposito(String id, double monto, String descripcion) {
-        super(id, monto, descripcion);
+    public Deposito(String id, double monto, String descripcion,int puntosGenerados,EstadoTransaccion estado) {
+        super(id, monto, descripcion,puntosGenerados,estado);
     }
 
     @Override

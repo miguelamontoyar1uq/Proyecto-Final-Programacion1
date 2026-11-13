@@ -2,12 +2,12 @@ package co.edu.uniquindio.poo.proyectofinal.model;
 
 import java.time.LocalDateTime;
 
-public class Beneficio {
+public class CatalogoBeneficio {
     private final TipoBeneficio tipo;
     private final LocalDateTime fechaActivacion;
     private final LocalDateTime fechaExpiracion;
 
-    public Beneficio(TipoBeneficio tipo) {
+    public CatalogoBeneficio(TipoBeneficio tipo) {
         if (tipo == null) {
             throw new IllegalArgumentException("El tipo de beneficio no puede ser nulo.");
         }

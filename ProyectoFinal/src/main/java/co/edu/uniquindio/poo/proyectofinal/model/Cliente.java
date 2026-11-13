@@ -5,28 +5,26 @@ import java.util.*;
 public class Cliente {
     private final String id;
     private String nombre;
+    private String documento;
     private String telefono;
     private String correo;
     private Map<String, Monedero> listaMonederos;
-    private List<TransaccionProgramada> listaTransaccionesProgramadas;
     private List<Notificacion> notificaciones;
     private int puntosAcumulados;
     private RangoCliente rango;
-    private List<Beneficio> beneficiosActivos;
+    private List<CatalogoBeneficio> beneficiosActivos;
     private List<RegistroPuntos> historialPuntos;
 
-    public Cliente(String id, String nombre, String telefono, String correo) {
+    public Cliente(String id, String nombre, String documento,String telefono, String correo) {
         this.id = id;
         this.nombre = nombre;
+        this.documento=documento;
         this.telefono = telefono;
         this.correo = correo;
-
         this.listaMonederos = new HashMap<>();
-        this.listaTransaccionesProgramadas = new ArrayList<>();
         this.notificaciones = new ArrayList<>();
         this.beneficiosActivos = new ArrayList<>();
         this.historialPuntos = new ArrayList<>();
-
         this.puntosAcumulados = 0;
         this.rango = RangoCliente.BRONCE; // MANOOOO pues supongo que todos los
         // cleintes emoezian en bronce no?
@@ -98,7 +96,7 @@ public class Cliente {
         return rango;
     }
 
-    public List<Beneficio> getBeneficiosActivos() {
+    public List<CatalogoBeneficio> getBeneficiosActivos() {
         return Collections.unmodifiableList(beneficiosActivos);
     }
 
@@ -148,7 +146,7 @@ public class Cliente {
         this.listaTransaccionesProgramadas.add(transaccion);
     }
 
-    public void activarBeneficio(Beneficio beneficio) {
+    public void activarBeneficio(CatalogoBeneficio beneficio) {
         if (beneficio == null) {
             throw new IllegalArgumentException("El beneficio no puede ser nulo.");
         }

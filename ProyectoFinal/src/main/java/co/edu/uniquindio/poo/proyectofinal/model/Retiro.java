@@ -2,8 +2,11 @@ package co.edu.uniquindio.poo.proyectofinal.model;
 
 public class Retiro extends Transaccion {
 
-    public Retiro(String id, double monto, String descripcion) {
-        super(id, monto, descripcion);
+    private double cargoRetiro;
+
+    public Retiro(String id, double monto, String descripcion,int puntosGenerados,EstadoTransaccion estado,double cargoRetiro) {
+        super(id, monto, descripcion,puntosGenerados,estado);
+        this.cargoRetiro=cargoRetiro;
     }
 
     @Override

@@ -36,7 +36,8 @@ public abstract class Monedero {
             throw new IllegalArgumentException("El monto a depositar debe ser mayor a cero.");
         }
         this.saldo += monto;
-        Deposito deposito = new Deposito(UUID.randomUUID().toString(), monto, "Depósito en " + numeroCuenta);
+        int puntosGenerados=calcularPuntosGenerados("retiro",monto);
+        Deposito deposito = new Deposito(UUID.randomUUID().toString(), monto, "Depósito en " + numeroCuenta,puntosGenerados,EstadoTransaccion.COMPLETADA);
         registrarTransaccion(deposito);
         return deposito;
     }
@@ -54,8 +55,10 @@ public abstract class Monedero {
         if (!validarLimiteRetiro(monto)) {
             throw new LimiteRetiroExcedidoException("El monto excede el límite máximo permitido para este monedero.");
         }
-        this.saldo -= monto;
-        Retiro retiro = new Retiro(UUID.randomUUID().toString(), monto, "Retiro de " + numeroCuenta);
+        double cargoRetiro=monto*0.01;
+        this.saldo -= monto-cargoRetiro;
+        int puntosGenerados=calcularPuntosGenerados("retiro",monto);
+        Retiro retiro = new Retiro(UUID.randomUUID().toString(), monto, "Retiro de " + numeroCuenta,puntosGenerados,EstadoTransaccion.COMPLETADA,cargoRetiro);
         registrarTransaccion(retiro);
         return retiro;
     }
@@ -83,6 +86,18 @@ public abstract class Monedero {
             throw new IllegalArgumentException("La transacción no puede ser nula.");
         }
         this.historialTransacciones.add(transaccion);
+    }
+
+    public int calcularPuntosGenerados(String tipoDeTransaccion, double monto){
+        int puntosGenerados=0;
+        int montoInt=(int) monto;
+        if(tipoDeTransaccion.equalsIgnoreCase("retiro")){
+            puntosGenerados=(montoInt/100)*2;
+        }
+        if(tipoDeTransaccion.equalsIgnoreCase("deposito")){
+            puntosGenerados=(montoInt/100);
+        }
+        return puntosGenerados;
     }
 
     // Métodos abstractos obligatorios

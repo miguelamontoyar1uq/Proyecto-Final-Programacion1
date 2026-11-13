@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class TransaccionProgramada implements Comparable<TransaccionProgramada> {
     private final String id;
-    private final String tipo; // "Depósito" o "Transferencia"
+    private TipoTransaccion tipoTransaccion; // "Depósito" o "Transferencia"
     private final double monto;
     private final String descripcion;
     private final String numeroCuentaOrigen;
@@ -13,7 +13,7 @@ public class TransaccionProgramada implements Comparable<TransaccionProgramada> 
     private LocalDateTime fechaEjecucion;
     private boolean activa;
 
-    public TransaccionProgramada(String id, String tipo, double monto, String descripcion,
+    public TransaccionProgramada(String id, TipoTransaccion tipoTransaccion, double monto, String descripcion,
                                  String numeroCuentaOrigen, String cuentaDestino,
                                  Frecuencia frecuencia, LocalDateTime fechaEjecucion) {
         if (id == null || id.isBlank()) {
@@ -26,7 +26,7 @@ public class TransaccionProgramada implements Comparable<TransaccionProgramada> 
             throw new IllegalArgumentException("La fecha de ejecución debe ser futura.");
         }
         this.id = id;
-        this.tipo = tipo;
+        this.tipoTransaccion=tipoTransaccion;
         this.monto = monto;
         this.descripcion = descripcion;
         this.numeroCuentaOrigen = numeroCuentaOrigen;
@@ -42,7 +42,6 @@ public class TransaccionProgramada implements Comparable<TransaccionProgramada> 
             case DIARIA -> fechaEjecucion = fechaEjecucion.plusDays(1);
             case SEMANAL -> fechaEjecucion = fechaEjecucion.plusWeeks(1);
             case MENSUAL -> fechaEjecucion = fechaEjecucion.plusMonths(1);
-            case UNICA -> activa = false; // no se repite, queda desactivada
         }
     }
 
@@ -56,8 +55,10 @@ public class TransaccionProgramada implements Comparable<TransaccionProgramada> 
         return this.fechaEjecucion.compareTo(otra.fechaEjecucion);
     }
 
+    public TipoTransaccion getTipoTransaccion() {
+        return tipoTransaccion;
+    }
     public String getId() { return id; }
-    public String getTipo() { return tipo; }
     public double getMonto() { return monto; }
     public String getDescripcion() { return descripcion; }
     public String getNumeroCuentaOrigen() { return numeroCuentaOrigen; }

@@ -2,13 +2,15 @@ package co.edu.uniquindio.poo.proyectofinal.model;
 
 public class MonederoGastos extends Monedero {
     private final double limiteRetiro;
+    private double umbralSaldoBajo;
 
-    public MonederoGastos(String numeroCuenta, double saldoInicial, double limiteRetiro) {
+    public MonederoGastos(String numeroCuenta, double saldoInicial, double limiteRetiro,double umbralSaldoBajo) {
         super(numeroCuenta, saldoInicial);
         if (limiteRetiro <= 0) {
             throw new IllegalArgumentException("El límite de retiro debe ser mayor a cero.");
         }
         this.limiteRetiro = limiteRetiro;
+        this.umbralSaldoBajo=umbralSaldoBajo;
     }
 
     @Override
